@@ -171,9 +171,12 @@
     const badge = g.hot
       ? '<span class="badge badge--hot">HOT</span>'
       : (isNew(g.released) ? '<span class="badge badge--new">NEW</span>' : '');
-    const banner = g.image
-      ? '<img class="card__img" src="' + escapeHtml(g.image) + '" alt="' + escapeHtml(g.title) + '" loading="lazy">'
-      : '<span class="card__glyph" aria-hidden="true">' + escapeHtml(g.glyph || '🎮') + '</span>';
+    // Картинка (если есть) поверх градиента; если не загрузилась — остаётся градиент + glyph
+    const glyph = '<span class="card__glyph" aria-hidden="true">' + escapeHtml(g.glyph || '🎮') + '</span>';
+    const img = g.image
+      ? '<img class="card__img" src="' + escapeHtml(g.image) + '" alt="' + escapeHtml(g.title) + '" loading="lazy" ' +
+        'onerror="this.parentNode.classList.remove(\'has-img\');this.remove()">'
+      : '';
     const players = g.players
       ? '<span class="card__meta"><i class="dot" aria-hidden="true"></i>' + fmtPlayers(g.players) + ' игроков</span>'
       : '';
@@ -182,10 +185,11 @@
       '<article class="card" style="--a:' + a + ';--b:' + b + ';--i:' + index + '">' +
         '<a class="card__link js-game" href="' + escapeHtml(g.url) + '" data-url="' + escapeHtml(g.url) +
           '" aria-label="Играть в ' + escapeHtml(g.title) + '">' +
-          '<div class="card__banner ' + pattern + '">' +
+          '<div class="card__banner ' + pattern + (g.image ? ' has-img' : '') + '">' +
             '<span class="card__shine" aria-hidden="true"></span>' +
             badge +
-            banner +
+            img +
+            glyph +
           '</div>' +
           '<div class="card__body">' +
             '<span class="card__genre">' + escapeHtml(GENRE_MAP[g.genre] || 'Игры') + '</span>' +

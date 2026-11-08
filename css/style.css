@@ -387,7 +387,19 @@ button, input, select { font: inherit; color: inherit; }
 }
 .card:hover .card__glyph { transform: scale(1.1) rotate(-4deg); }
 
-.card__img { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; object-fit: cover; }
+.card__img {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1);
+}
+.card:hover .card__banner.has-img .card__img { transform: scale(1.06); }
+
+/* картинка закрыла заглушку-эмодзи; при битом файле класс снимается и градиент возвращается */
+.card__banner.has-img .card__glyph { display: none; }
 
 .card__shine {
   position: absolute;
@@ -458,6 +470,7 @@ button, input, select { font: inherit; color: inherit; }
   color: #fff;
   background: linear-gradient(120deg, var(--a), var(--b));
   box-shadow: 0 10px 24px -12px var(--a);
+  margin-left: auto;
   transition: transform .14s ease, box-shadow .2s ease, filter .2s ease;
   flex: 0 0 auto;
 }
