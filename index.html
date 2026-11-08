@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#07070d">
+  <meta name="description" content="Каталог игр NewStarGames — витрина-навигатор по играм в Telegram.">
+
+  <!-- Telegram WebApp SDK: обязателен, должен грузиться до остального JS -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <title>NewStarGames · Каталог игр</title>
+
+  <link rel="preconnect" href="https://telegram.org">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+</head>
+<body>
+
+  <!-- Фоновые неоновые пятна -->
+  <div class="bg" aria-hidden="true">
+    <span class="bg__glow bg__glow--a"></span>
+    <span class="bg__glow bg__glow--b"></span>
+    <span class="bg__glow bg__glow--c"></span>
+    <span class="bg__grid"></span>
+  </div>
+
+  <header class="topbar">
+    <div class="topbar__inner">
+      <a class="brand" href="./">
+        <span class="brand__star" aria-hidden="true">✦</span>
+        <span class="brand__text">
+          <b>NewStar</b><span>Games</span>
+        </span>
+      </a>
+      <p class="topbar__hello" id="hello">Каталог игр</p>
+    </div>
+  </header>
+
+  <main class="app">
+
+    <!-- Блок приветствия -->
+    <section class="hero">
+      <h1 class="hero__title">Игры <span>NewStarGames</span></h1>
+      <p class="hero__sub">Выбирай игру и играй прямо в Telegram — без скачивания.</p>
+    </section>
+
+    <!-- Поиск + сортировка -->
+    <section class="controls" aria-label="Поиск и сортировка">
+      <div class="search">
+        <svg class="search__icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M21 21l-4.3-4.3M17 10.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <input class="search__input" id="search" type="search" inputmode="search" autocomplete="off"
+               placeholder="Поиск игры…" aria-label="Поиск по названию и описанию">
+        <button class="search__clear" id="searchClear" type="button" hidden aria-label="Очистить поиск">✕</button>
+      </div>
+
+      <div class="sort">
+        <label class="sort__label" for="sort">Сортировка</label>
+        <select class="sort__select" id="sort">
+          <option value="popular">Популярные</option>
+          <option value="new">Сначала новые</option>
+          <option value="title">По названию А–Я</option>
+          <option value="az">По названию Я–А</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Фильтры по жанрам -->
+    <nav class="chips" id="chips" aria-label="Фильтр по жанрам">
+      <button class="chip is-active" type="button" data-genre="all" aria-pressed="true">
+        Все <span class="chip__num" data-count-for="all">0</span>
+      </button>
+      <!-- жанры подставляет app.js -->
+    </nav>
+
+    <p class="results" id="results" aria-live="polite"></p>
+
+    <!-- Сетка карточек -->
+    <section class="grid" id="grid" aria-label="Список игр"></section>
+
+    <!-- Пустой результат -->
+    <div class="empty" id="empty" hidden>
+      <div class="empty__icon" aria-hidden="true">🕹️</div>
+      <h2 class="empty__title">Ничего не найдено</h2>
+      <p class="empty__text">Попробуй другой запрос или сбрось фильтры.</p>
+      <button class="btn btn--ghost" id="resetFilters" type="button">Сбросить фильтры</button>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <p><span id="count">0</span> игр · NewStarGames</p>
+    <p class="footer__note">Каталог-навигатор: карточка открывает игру по ссылке бота.</p>
+  </footer>
+
+  <script src="js/games.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

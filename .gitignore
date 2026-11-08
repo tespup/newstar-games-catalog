@@ -1,0 +1,8 @@
+# временные превью и системный мусор
+.preview/
+.DS_Store
+Thumbs.db
+
+# редакторы
+.vscode/
+.idea/
