@@ -1,5 +1,6 @@
 # временные превью и системный мусор
 .preview/
+.acl-recovery/
 .DS_Store
 Thumbs.db
 

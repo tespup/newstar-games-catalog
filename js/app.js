@@ -92,6 +92,63 @@
   if (state.genre !== 'all' && !GENRE_MAP[state.genre]) state.genre = 'all';
   if (!['popular', 'new', 'title', 'az'].includes(state.sort)) state.sort = 'popular';
 
+  /* ---------- Deep-линки: ?startapp=... ---------------------------------- */
+  /* Формы параметра startapp:
+       genre:puzzle   — открыть каталог с фильтром по жанру
+       q:бомб         — сразу показать поиск
+       play:tanks-8bit— сразу запустить игру
+       tanks-8bit     — показать карточку игры и подсветить её
+     Работает и при запуске через main app (https://t.me/bot?startapp=...),
+     и через direct link (https://t.me/bot/games?startapp=...), и в браузере (?startapp=...). */
+  const deepAction = applyDeepLink(readStartParam());
+
+  function readStartParam() {
+    try {
+      const p = tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param;
+      if (p) return String(p);
+    } catch (e) { /* ignore */ }
+    try {
+      const u = new URLSearchParams(window.location.search);
+      return u.get('tgWebAppStartParam') || u.get('startapp') || '';
+    } catch (e) { return ''; }
+  }
+
+  function findGame(key) {
+    const k = String(key).toLowerCase();
+    for (let i = 0; i < ALL_GAMES.length; i++) {
+      if (String(ALL_GAMES[i].id).toLowerCase() === k) return ALL_GAMES[i];
+    }
+    return null;
+  }
+
+  function applyDeepLink(raw) {
+    if (!raw) return null;
+    let value;
+    try { value = decodeURIComponent(String(raw)).trim(); } catch (e) { value = String(raw).trim(); }
+    if (!value) return null;
+
+    const m = value.match(/^(genre|q|play|game|id):(.+)$/i);
+    const kind = m ? m[1].toLowerCase() : '';
+    const arg = (m ? m[2] : value).trim();
+
+    if (kind === 'q') { state.q = arg; state.genre = 'all'; return null; }
+    if (GENRE_MAP[arg] && (kind === 'genre' || !kind)) { state.genre = arg; state.q = ''; return null; }
+
+    const game = findGame(arg);
+    if (game) return { open: kind === 'play', id: game.id };
+
+    state.q = arg; // на худой конец считаем это поисковым запросом
+    state.genre = 'all';
+    return null;
+  }
+
+  function focusCard(id) {
+    const card = grid.querySelector('.card[data-id="' + id + '"]');
+    if (!card) return;
+    card.classList.add('is-flash');
+    setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'center' }), 140);
+  }
+
   /* ---------- DOM -------------------------------------------------------- */
   const grid = $('#grid');
   const chipsBar = $('#chips');
@@ -182,7 +239,7 @@
       : '';
 
     return '' +
-      '<article class="card" style="--a:' + a + ';--b:' + b + ';--i:' + index + '">' +
+      '<article class="card" data-id="' + escapeHtml(g.id) + '" style="--a:' + a + ';--b:' + b + ';--i:' + index + '">' +
         '<a class="card__link js-game" href="' + escapeHtml(g.url) + '" data-url="' + escapeHtml(g.url) +
           '" aria-label="Играть в ' + escapeHtml(g.title) + '">' +
           '<div class="card__banner ' + pattern + (g.image ? ' has-img' : '') + '">' +
@@ -283,4 +340,13 @@
   /* ---------- Старт ------------------------------------------------------ */
   buildChips();
   render();
+
+  if (deepAction) {
+    const g = findGame(deepAction.id);
+    if (deepAction.open && g) {
+      setTimeout(() => openGame(g.url), 300);
+    } else {
+      focusCard(deepAction.id);
+    }
+  }
 })();
