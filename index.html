@@ -21,13 +21,13 @@
   <meta name="twitter:description" content="6 игр в один тап прямо в Telegram.">
   <meta name="twitter:image" content="https://tespup.github.io/newstar-games-catalog/assets/space-ai-commander.jpg">
 
-  <!-- Telegram WebApp SDK: обязателен, должен грузиться до остального JS -->
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
   <title>NewStarGames · Каталог игр</title>
 
   <link rel="preconnect" href="https://telegram.org">
   <link rel="stylesheet" href="css/style.css">
+  <!-- SDK Telegram грузится отдельно от страницы: если telegram.org недоступен,
+       каталог всё равно отрисуется и будет работать как обычный сайт -->
+  <script src="https://telegram.org/js/telegram-web-app.js" async></script>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
 </head>
 <body>

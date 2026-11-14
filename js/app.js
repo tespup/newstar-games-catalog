@@ -6,10 +6,11 @@
   'use strict';
 
   /* ---------- Telegram WebApp ------------------------------------------- */
-  const tg = (window.Telegram && window.Telegram.WebApp) || null;
-  const isTg = !!tg && !!tg.isTelegram;
+  let tg = (window.Telegram && window.Telegram.WebApp) || null;
+  let isTg = !!tg && !!tg.isTelegram;
 
-  if (tg) {
+  function tuneTelegram() {
+    if (!tg) return;
     tg.ready();
     tg.expand();
 
@@ -18,6 +19,24 @@
       if (tg.setHeaderColor) tg.setHeaderColor('#07070d');
       if (tg.setBackgroundColor) tg.setBackgroundColor('#07070d');
     } catch (e) { /* старые клиенты */ }
+  }
+  tuneTelegram();
+
+  // SDK грузится асинхронно и может прийти позже страницы:
+  // подождать до 4 секунд, а нет — работать как обычный сайт
+  if (!tg) {
+    let tries = 0;
+    const waitSdk = setInterval(() => {
+      tg = (window.Telegram && window.Telegram.WebApp) || null;
+      if (tg) {
+        isTg = !!tg.isTelegram;
+        tuneTelegram();
+        greet();
+        clearInterval(waitSdk);
+      } else if (++tries >= 40) {
+        clearInterval(waitSdk);
+      }
+    }, 100);
   }
 
   const haptic = (style) => {
@@ -162,13 +181,14 @@
   countEl.textContent = ALL_GAMES.length;
 
   /* ---------- Приветствие ------------------------------------------------ */
-  (function greet() {
+  const greet = () => {
     const user = isTg && tg.initDataUnsafe && tg.initDataUnsafe.user;
     const name = user && (user.first_name || user.username);
     $('#hello').textContent = name
       ? 'Привет, ' + name + '! Выбери игру 👇'
       : 'Витрина игр NewStarGames — играй в один тап';
-  })();
+  };
+  greet();
 
   /* ---------- Чипы жанров ------------------------------------------------ */
   function buildChips() {
